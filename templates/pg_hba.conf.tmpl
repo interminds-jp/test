@@ -1,0 +1,30 @@
+# PostgreSQL host-based authentication.
+#
+# Rendered by setup-postgres.sh -- edits here are overwritten on re-run.
+# The previous file is kept as pg_hba.conf.bak.<timestamp>.
+#
+# Rules are matched top to bottom and the FIRST match wins, so a broad rule
+# placed early silently disables everything below it. Keep the narrowest
+# rules first.
+#
+# Never add `trust`, and never widen an address to 0.0.0.0/0. If clients need
+# to reach this server from outside the host, put them behind a VPN or an SSH
+# tunnel rather than exposing port 5432.
+
+# TYPE      DATABASE        USER            ADDRESS            METHOD
+
+# Local administrative access over the Unix socket. `peer` matches the OS
+# user, so this works without a password and cannot be used over the network.
+local       all             postgres                           peer
+
+# Other local socket connections still need a password.
+local       all             all                                scram-sha-256
+
+# Loopback. Used by backup jobs, monitoring and psql on this host.
+host        all             all             127.0.0.1/32       scram-sha-256
+host        all             all             ::1/128            scram-sha-256
+
+# Networks allowed in via PG_ALLOW_CIDR. These are `hostssl`, so a client that
+# will not negotiate TLS is rejected rather than silently downgraded.
+__ALLOWED_HOSTS__
+# Anything not matched above is refused.
