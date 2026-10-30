@@ -16,7 +16,7 @@ TF_PASSWORD='test-pass' TF_API_KEY='sk-test' php "$ROOT/deploy/make-config.php" 
   | sed "s/'allow_mock' => false/'allow_mock' => true/" > "$WORK/site/app/config.php"
 
 MOCK_LOG="$WORK/mock.log" php -S "127.0.0.1:$MOCK_PORT" "$ROOT/tests/web/mock_anthropic.php" >"$WORK/mock.out" 2>&1 & PIDS+=($!)
-ANTHROPIC_BASE_URL="http://127.0.0.1:$MOCK_PORT" php -S "127.0.0.1:$APP_PORT" -t "$WORK/site/public" >"$WORK/app.out" 2>&1 & PIDS+=($!)
+ANTHROPIC_BASE_URL="http://127.0.0.1:$MOCK_PORT" php -S "127.0.0.1:$APP_PORT" -t "$WORK/site/public" "$ROOT/tests/web/static_router.php" >"$WORK/app.out" 2>&1 & PIDS+=($!)
 sleep 1
 
 BASE="http://127.0.0.1:$APP_PORT"
