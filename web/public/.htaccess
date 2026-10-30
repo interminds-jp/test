@@ -1,0 +1,36 @@
+# click.interminds.work 公開ディレクトリ（Apache / XSERVER 想定）
+Options -Indexes
+
+# ドットファイル（.git, .env など）を公開しない
+<FilesMatch "^\.">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# HTTPS を強制
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+DirectoryIndex index.php
+
+# 画像・CSS・JS のキャッシュ（更新頻度が低いので短めに）
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=300"
+  </FilesMatch>
+</IfModule>
+
+# アップロード上限（PDF 用）。XSERVER で php.ini の変更が効かない場合は、サーバーパネルの PHP 設定で上げる
+<IfModule mod_php.c>
+  php_value upload_max_filesize 32M
+  php_value post_max_size 40M
+</IfModule>

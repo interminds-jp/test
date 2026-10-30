@@ -1,0 +1,189 @@
+{
+  "type": "object",
+  "properties": {
+    "product": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "商品・サービス名"
+        },
+        "summary": {
+          "type": "string",
+          "description": "何を・誰向けに・どんな価値で、を2〜3文で"
+        },
+        "category": {
+          "type": "string",
+          "description": "商品カテゴリ"
+        },
+        "buyer_problems": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "買い手が抱える課題"
+        }
+      },
+      "required": [
+        "name",
+        "summary",
+        "category",
+        "buyer_problems"
+      ],
+      "additionalProperties": false
+    },
+    "target_hypothesis": {
+      "type": "object",
+      "properties": {
+        "sell_mode": {
+          "type": "string",
+          "enum": [
+            "sell_to_users",
+            "sell_to_resellers",
+            "both"
+          ],
+          "description": "使う企業に売る / 扱う企業に売る / 両方"
+        },
+        "industries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "ターゲット業種"
+        },
+        "job_titles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "ターゲット職種・決裁者"
+        },
+        "company_size": {
+          "type": "string",
+          "description": "想定する企業規模（従業員・売上）"
+        },
+        "handled_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "ターゲット企業が扱っていそうな取扱品目"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "営業リスト検索で使うキーワード"
+        }
+      },
+      "required": [
+        "sell_mode",
+        "industries",
+        "job_titles",
+        "company_size",
+        "handled_items",
+        "keywords"
+      ],
+      "additionalProperties": false
+    },
+    "tag_selection": {
+      "type": "object",
+      "properties": {
+        "must": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tag_id": {
+                "type": "string",
+                "description": "カタログのタグ番号"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "tag_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "description": "AND条件（0〜3個）"
+        },
+        "should": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tag_id": {
+                "type": "string",
+                "description": "カタログのタグ番号"
+              },
+              "weight": {
+                "type": "integer",
+                "description": "適合度の重み。1（弱い）〜5（強い）"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "tag_id",
+              "weight",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "description": "加点条件（重み付き）"
+        },
+        "exclude": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tag_id": {
+                "type": "string",
+                "description": "カタログのタグ番号"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "tag_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          },
+          "description": "除外条件"
+        }
+      },
+      "required": [
+        "must",
+        "should",
+        "exclude"
+      ],
+      "additionalProperties": false
+    },
+    "strategy_notes": {
+      "type": "string",
+      "description": "このタグ構成にした狙いと、使い分けの考え方"
+    },
+    "caveats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "不確かな点・資料から読み取れなかった点・注意点"
+    }
+  },
+  "required": [
+    "product",
+    "target_hypothesis",
+    "tag_selection",
+    "strategy_notes",
+    "caveats"
+  ],
+  "additionalProperties": false
+}

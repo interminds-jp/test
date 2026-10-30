@@ -1,0 +1,5 @@
+/vendor/
+/app/config.php
+/app/var/*
+!/app/var/.gitkeep
+/app/data/
