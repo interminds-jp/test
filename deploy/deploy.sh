@@ -56,16 +56,17 @@ do_upload() {
     remote "mkdir -p '$PUBLIC_DIR' '$APP_DIR/var' '$VENDOR_DIR' && chmod 775 '$APP_DIR/var'"
   fi
   # 公開ファイル: 既存の他ファイル（.well-known 等）を消さないよう --delete は付けない
-  rsync -az "${n[@]}" -e "$RSH" "$DIST/public/" "$REMOTE:$PUBLIC_DIR/"
+  rsync -az ${n[@]+"${n[@]}"} -e "$RSH" "$DIST/public/" "$REMOTE:$PUBLIC_DIR/"
   # app: サーバー側の config.php と var/（レート制限・ロック状態）は保持する
-  rsync -az --delete "${n[@]}" -e "$RSH" --exclude='/config.php' --exclude='/var/' "$DIST/app/" "$REMOTE:$APP_DIR/"
-  rsync -az --delete "${n[@]}" -e "$RSH" "$DIST/vendor/" "$REMOTE:$VENDOR_DIR/"
+  rsync -az --delete ${n[@]+"${n[@]}"} -e "$RSH" --exclude='/config.php' --exclude='/var/' "$DIST/app/" "$REMOTE:$APP_DIR/"
+  rsync -az --delete ${n[@]+"${n[@]}"} -e "$RSH" "$DIST/vendor/" "$REMOTE:$VENDOR_DIR/"
   echo "done. 次は: deploy/verify.sh https://click.interminds.work"
 }
 
 do_init_config() {
   setup_ssh
-  local tmp; tmp="$(mktemp)"; trap 'rm -f "$tmp"' EXIT; chmod 600 "$tmp"
+  # tmp は local なので、EXIT 時に参照できるよう trap の中で展開しておく
+  local tmp; tmp="$(mktemp)"; trap "rm -f '$tmp'" EXIT; chmod 600 "$tmp"
   local pw pw2 key="${ANTHROPIC_API_KEY:-}"
   read -r -s -p "ログインパスワード: " pw; echo
   read -r -s -p "もう一度: " pw2; echo
